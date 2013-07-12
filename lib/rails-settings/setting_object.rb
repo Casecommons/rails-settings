@@ -34,6 +34,14 @@ module RailsSettings
       end
     end
 
+    def value
+      read_attribute :value
+    end
+
+    def value= val
+      write_attribute :value, val
+    end
+
   private
 
     def _get_value(name)
