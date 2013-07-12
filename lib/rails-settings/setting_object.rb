@@ -13,10 +13,6 @@ module RailsSettings
 
     serialize :value, Hash
 
-    # attr_protected can not be here used because it touches the database which is not connected yet.
-    # So allow no attributes and override <tt>#sanitize_for_mass_assignment</tt>
-    attr_accessible
-
     REGEX_SETTER = /\A([a-z]\w+)=\Z/i
     REGEX_GETTER = /\A([a-z]\w+)\Z/i
 
@@ -38,13 +34,8 @@ module RailsSettings
       end
     end
 
-  protected
-    # Simulate attr_protected by removing all regular attributes
-    def sanitize_for_mass_assignment(attributes, role = nil)
-      attributes.except('id', 'var', 'value', 'target_id', 'target_type', 'created_at', 'updated_at')
-    end
-
   private
+
     def _get_value(name)
       if value[name].nil?
         _target_class.default_settings[var.to_sym][name]
