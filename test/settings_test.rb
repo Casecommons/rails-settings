@@ -78,11 +78,6 @@ class SettingsTest < Test::Unit::TestCase
     
     assert_setting nil, :two, user1
     assert_setting nil, :one, user2
-
-    assert_equal({ "one" => 1}, user1.settings.all('one'))
-    assert_equal({ "two" => 2}, user2.settings.all('two'))
-    assert_equal({ "one" => 1}, user1.settings.all('o'))
-    assert_equal({}, user1.settings.all('non_existing_var'))
   end
 
   def test_target_scope_is_instance_safe
@@ -128,14 +123,7 @@ class SettingsTest < Test::Unit::TestCase
     user2.destroy
     assert_equal before_count - 1, Settings.count
   end
-  
-  def test_all
-    assert_equal({ "test2" => "bar", "test" => "foo" }, Settings.all)
-    assert_equal({ "test2" => "bar" }, Settings.all('test2'))
-    assert_equal({ "test2" => "bar", "test" => "foo" }, Settings.all('test'))
-    assert_equal({}, Settings.all('non_existing_var'))
-  end
-  
+
   def test_merge
     assert_raise(TypeError) do
       Settings.merge! :test, { :a => 1 }
@@ -206,20 +194,6 @@ class SettingsTest < Test::Unit::TestCase
     assert_equal '2a', user.settings[:two]   # ensure settings are properly overwritten
     assert_equal '3',  user.settings[:three] # ensure new setting are created
   end
-
-  def test_all_includes_defaults
-    Settings.defaults[:foo] = 'bar'
-    user = User.create! :name => 'Mr. Foo'
-    assert_equal({ 'foo' => 'bar' }, user.settings.all)
-  end
-  
-  def test_issue_18
-    Settings.one = 'value1'
-    User.settings.two = 'value2'
-    
-    assert_equal({'two' => 'value2'}, User.settings.all)
-  end
-  
 
   private
     def assert_setting(value, key, scope_target=nil)

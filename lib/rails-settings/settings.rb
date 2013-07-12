@@ -36,20 +36,6 @@ class Settings < ActiveRecord::Base
     end
   end
 
-  #retrieve all settings as a hash (optionally starting with a given namespace)
-  def self.all(starting_with=nil)
-    options = starting_with ? { :conditions => "var LIKE '#{starting_with}%'"} : {}
-    vars = target_scoped.find(:all, {:select => 'var, value'}.merge(options))
-    
-    result = {}
-    vars.each do |record|
-      result[record.var] = record.value
-    end
-    selected_defaults = defaults.select{ |k, v| k =~ /^#{starting_with}/ }
-    selected_defaults = Hash[selected_defaults] if selected_defaults.is_a?(Array)
-    selected_defaults.merge(result).with_indifferent_access
-  end
-  
   #get a setting value by [] notation
   def self.[](var_name)
     if var = target(var_name)
