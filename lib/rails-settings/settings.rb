@@ -51,7 +51,7 @@ class Settings < ActiveRecord::Base
   
   #set a setting value by [] notation
   def self.[]=(var_name, value)
-    record = target_scoped.find_or_initialize_by_var(var_name.to_s)
+    record = target_scoped.where(var: var_name.to_s).first_or_initialize
     record.value = value
     record.save!
     value
@@ -70,7 +70,7 @@ class Settings < ActiveRecord::Base
   end
 
   def self.target(var_name)
-    target_scoped.find_by_var(var_name.to_s)
+    target_scoped.where(var: var_name.to_s).first
   end
   
   #get the value field, YAML decoded
@@ -84,7 +84,7 @@ class Settings < ActiveRecord::Base
   end
   
   def self.target_scoped
-    Settings.scoped_by_target_type_and_target_id(target_type, target_id)
+    Settings.where(target_type: target_type, target_id: target_id)
   end
   
   #Deprecated!
