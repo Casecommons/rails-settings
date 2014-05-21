@@ -124,6 +124,10 @@ class SettingsTest < Test::Unit::TestCase
     assert_equal before_count - 1, Settings.count
   end
 
+  def test_to_h
+    assert_equal({ "test2" => "bar", "test" => "foo" }, Settings.to_h)
+  end
+
   def test_merge
     assert_raise(TypeError) do
       Settings.merge! :test, { :a => 1 }
@@ -194,6 +198,13 @@ class SettingsTest < Test::Unit::TestCase
     assert_equal '2a', user.settings[:two]   # ensure settings are properly overwritten
     assert_equal '3',  user.settings[:three] # ensure new setting are created
   end
+
+  def test_to_h_includes_defaults
+    Settings.defaults[:foo] = 'bar'
+    user = User.create! :name => 'Mr. Foo'
+    assert_equal({'test2' => 'bar', 'test' => 'foo', 'foo' => 'bar'}, user.settings.to_h)
+  end
+
 
   private
     def assert_setting(value, key, scope_target=nil)

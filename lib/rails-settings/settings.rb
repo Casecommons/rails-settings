@@ -31,6 +31,13 @@ class Settings < ActiveRecord::Base
     end
   end
 
+  def self.to_h
+    settings = all.each_with_object({}) do |setting, hash|
+      hash[setting.var] = setting.value
+    end
+    defaults.merge(settings)
+  end
+
   #get a setting value by [] notation
   def self.[](var_name)
     if var = target(var_name)
